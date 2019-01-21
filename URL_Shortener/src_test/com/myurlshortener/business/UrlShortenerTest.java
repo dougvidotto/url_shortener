@@ -8,31 +8,31 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import com.myurlshortener.exceptions.IllegalUrlFormatException;
+import com.myurlshortener.exceptions.IllegalURLFormatException;
 
 class UrlShortenerTest {
 	
 	private static final String REGEX = "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$";
 	
 	@Test
-	void testUrlWithoutDomain() {
+	void testIncompleteURL() {
 		String incorrectUrl = "http://myUrl."; //There is nothing after last '.'
-		URLShortener shortener = new URLShortener(incorrectUrl);
-		assertThrows(IllegalUrlFormatException.class, ()-> shortener.getShorterUrl());
+		URLShortener shortener = new URLShortener();
+		assertThrows(IllegalURLFormatException.class, ()-> shortener.createShorterURL(incorrectUrl));
 	}
 	
 	@Test
-	void testNotFormattedString() throws Exception {
+	void testWithRegularString() throws Exception {
 		String incorrectUrl = "WeirdString";
-		URLShortener shortener = new URLShortener(incorrectUrl);
-		assertThrows(IllegalUrlFormatException.class, ()-> shortener.getShorterUrl());
+		URLShortener shortener = new URLShortener();
+		assertThrows(IllegalURLFormatException.class, ()-> shortener.createShorterURL(incorrectUrl));
 	}
 	
 	@Test
 	void testReturnValidShortUrl() throws Exception {
-		String originalUrl = "https://techcrunch.com/";
-		URLShortener shortener = new URLShortener(originalUrl);
-		String shorterUrl = shortener.getShorterUrl();
+		String originalURL = "https://techcrunch.com/";
+		URLShortener shortener = new URLShortener();
+		String shorterUrl = shortener.createShorterURL(originalURL);
 		Pattern urlPattern = Pattern.compile(REGEX);
 		Matcher patternMatcher = urlPattern.matcher(shorterUrl);
 		assertTrue(patternMatcher.matches());
@@ -41,11 +41,10 @@ class UrlShortenerTest {
 	@Test
 	void testReturnSameShorterUrlIfCalledMoreThanOnce() throws Exception {
 		String firstUrl = "https://techcrunch.com/";
-		URLShortener firstShortener = new URLShortener(firstUrl);
-		String firstShorterUrl = firstShortener.getShorterUrl();
+		URLShortener shortener = new URLShortener();
+		String firstShorterURL = shortener.createShorterURL(firstUrl);
 		
-		String secondUrl = "https://techcrunch.com/";
-		URLShortener secondShortener = new URLShortener(secondUrl);
-		assertTrue(firstShorterUrl.equals(secondShortener.getShorterUrl()));
+		String secondURL = "https://techcrunch.com/";
+		assertTrue(firstShorterURL.equals(shortener.createShorterURL(secondURL)));
 	}
 }
